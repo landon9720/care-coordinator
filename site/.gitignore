@@ -4,3 +4,4 @@ dist/
 .vercel/
 # Generated from ../README.md at build time. Edit the README, not this.
 src/pages/_readme.md
+.vercel
