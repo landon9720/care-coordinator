@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Privacy problem
+    url: https://github.com/landon9720/care-coordinator/blob/main/CONTRIBUTING.md#reporting-a-privacy-problem
+    about: Found personal information in this repo? Do not open a public issue.

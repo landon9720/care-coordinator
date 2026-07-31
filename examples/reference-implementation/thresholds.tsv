@@ -1,0 +1,10 @@
+category	patient_days	other_days	note
+lab_result	7	14	Results can return within days. Silence past a week is worth a look.
+message_reply	10	10	Use the clinic's OWN published response window, not a guess. Many publish one.
+referral	10	14	Referrals sit in queues. A known rot point.
+records_request	21	30	HIPAA right of access is 30 days. This is statutory, not a guess.
+patient_scheduling	21	30	HIGHEST RISK. No formal deadline exists, so nothing else in the system is watching.
+specialist_interval	30	60	Driven by clinical interval. Prefer setting expected_by over relying on this.
+prep_window	3	7	Silently time-boxed and unrecoverable once missed.
+form	7	14	Often gates something downstream.
+other	21	30	Deliberately conservative. Recategorize rather than tuning this.

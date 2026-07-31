@@ -1,0 +1,47 @@
+# Never commit anything derived from a real medical record.
+# This repository is public. See CONTRIBUTING.md.
+
+*-extracted/
+readable/
+records/
+*.zip
+coordinator/
+open-items.tsv
+movements.tsv
+inbox.jsonl
+self-reported*
+.care-coordinator/
+
+# Local config that may point at a private store
+.env
+.env.*
+!.env.example
+
+# Build
+node_modules/
+dist/
+.astro/
+.vercel/
+.DS_Store
+__pycache__/
+*.pyc
+
+# State created as a side effect of tooling, not by choice.
+# These rules must exist BEFORE the tool that creates the file runs;
+# afterwards is too late by definition. See skill/reference/getting-started.md
+*.swp
+*.swo
+*~
+.*.sw?
+.vercel/
+.idea/
+.vscode/
+*.code-workspace
+.netrc
+.npmrc
+.python_history
+.bash_history
+.zsh_history
+.coverage
+htmlcov/
+*.log
