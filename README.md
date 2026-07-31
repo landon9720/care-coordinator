@@ -5,7 +5,7 @@ patient portal, make them readable, keep track of what is actually open, and
 coordinate your own care.
 
 <!-- site:skip -->
-**[care-coordinator-nine.vercel.app](https://care-coordinator-nine.vercel.app)** — the same
+**[open-care-coordinator.vercel.app](https://open-care-coordinator.vercel.app)** — the same
 content as this README, as a web page.
 <!-- /site:skip -->
 
