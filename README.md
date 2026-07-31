@@ -1,144 +1,278 @@
 # care-coordinator
 
-Tools and doctrine for using an AI agent to get your medical records out of a
-patient portal, make them readable, keep track of what is actually open, and
-coordinate your own care.
+Get your medical records out of a patient portal, convert them into text you and
+an AI agent can actually read, and track what is still open.
 
 <!-- site:skip -->
-**[open-care-coordinator.vercel.app](https://open-care-coordinator.vercel.app)** — the same
-content as this README, as a web page.
+**[open-care-coordinator.vercel.app](https://open-care-coordinator.vercel.app)** —
+this README as a web page.
 <!-- /site:skip -->
 
+Three parts, usable independently:
 
-This is not a medical app and it gives no medical advice. It handles logistics:
-what was started, whose move it is, and what has been sitting untouched.
+| | |
+|---|---|
+| `converters/` | C-CDA XML → markdown and CSV. Python 3 stdlib only, no install. |
+| `skill/` | A [Claude Skill](https://docs.claude.com/en/docs/claude-code/skills) telling an agent what to track and when to speak up. |
+| `examples/` | An optional reference implementation of a dormancy check. |
 
-## The problem it exists for
+It coordinates logistics. It gives no medical advice.
 
-A clinician orders something. Completing it requires you to call and book it, or
-to follow up, or to send something in. You don't. Nobody notices.
+## Why track dormancy
 
-That failure is structural rather than anyone's fault. Items like that usually
-have no deadline attached, so nothing in any system is watching them. There is no
-alert to miss because no alert was ever configured. Clinics have machinery that
-chases their own queues, at least sometimes: recall lists, schedulers, reminder
-calls. Nobody chases the patient.
+Most things that go wrong here are not analysis errors. A clinician orders
+something, completing it needs you to call and book, you don't, and nothing
+anywhere notices — because items like that carry no deadline, so no alert was
+ever configured to miss.
 
-That is a description of fee-for-service outpatient care, which is where this was
-built. Integrated and single-payer systems with organized recall do chase patients
-for some overdue items, so the asymmetry is weaker there. Reports from those
-systems are welcome.
+The practical consequence for anything you build: **watch elapsed time since last
+movement, not just due dates**, and treat patient-side silence as more alarming
+than clinic-side silence. Clinics have recall lists and schedulers. Nobody chases
+the patient. (Less true in integrated and single-payer systems with organized
+recall.)
 
-So the working assumption behind everything here is that silence should worry you
-*more* when the ball is in your court, not less. An order that requires you to
-phone and book something is the highest-risk item on the board precisely because
-it has the least structure around it.
+## Requirements
 
-## What's in here
+- **Python 3.8+** for the converters. Standard library only — no `pip install`,
+  no virtualenv, no `requirements.txt`.
+- **Node 22.12+** only if you want to build the website. Not needed otherwise.
+- An AI agent is optional. The converters are useful on their own.
 
-**`skill/`** is a [Claude Skill](https://docs.claude.com/en/docs/claude-code/skills).
-It is doctrine rather than machinery: it tells an agent what to track, what to
-watch for, when to speak up, and where the boundaries are. It does not require
-your files to be in any particular format or place. Install it and your agent
-works with whatever you already have.
+## Install the skill
 
-**`converters/`** turns raw portal exports into text you and your agent can
-actually read. Three Python scripts, standard library only, no install step.
-
-**`examples/`** holds a reference implementation of a dormancy tracker, for
-anyone who wants that shape. It is one way to do it, not the way.
-
-## Getting your records out
-
-You are legally entitled to them. Two things worth knowing:
-
-- **HIPAA right of access** gives you your records within 30 days. This is a
-  statutory deadline, not a courtesy.
-- **The 21st Century Cures Act** information blocking rule is why patient API
-  access exists at all, and why "we don't do that" is usually not a valid answer.
-
-Most portals offer a bulk export somewhere in a records or document section. What
-comes back is typically a zip of C-CDA XML, sometimes a FHIR JSON bundle. Download
-links often expire in about a week, so keep the zip. It is your source of truth.
-
-One thing to internalize early: **an export is a dated snapshot, and absence from
-it is not evidence of absence.** Exports carry explicit incompleteness notices.
-If something isn't there, that means unknown, not no.
-
-## Make it readable
-
-Raw C-CDA and FHIR are machine interchange formats. They are dense with
-namespaces, template identifiers, escaping, and boilerplate repeated on every
-entry. Converting that to plain text is not a preprocessing chore, it is one of
-the main things this system does for you.
-
-For a human it is the difference between an unreadable file and your own medical
-history. For a language model the gain is bigger and less obvious: raw XML burns
-enormous context on identifiers that carry no meaning, and that noise measurably
-degrades reasoning about the parts that do. The reduction is roughly an order of
-magnitude in both cases.
-
-```
-python3 converters/01_ccda_to_markdown.py   # one markdown file per encounter
-python3 converters/02_extract_tables.py     # timeline + diagnoses/meds/immunizations/procedures
-python3 converters/03_labs_csv.py           # every numeric result as one time series
+```bash
+git clone https://github.com/landon9720/care-coordinator.git
+ln -s "$PWD/care-coordinator/skill" ~/.claude/skills/care-coordinator
 ```
 
-Run them from the directory holding your extracted exports. Two rules make this
-safe to redo: the original export is the source of truth, and everything derived
-is disposable. Regenerate derived files rather than editing them, or you create a
-second source of truth that will quietly diverge.
+A symlink keeps it updatable with `git pull`. Copy the directory instead if you
+prefer to pin it. Verify with `/skills` in Claude Code, or just ask your agent
+what is still open in your care — the skill's frontmatter triggers on phrasing
+like *"did I ever get that scan"* or *"what am I forgetting"*.
 
-Anything you wrote yourself is a *source*, not a derivative. Keep it outside the
-tree that gets regenerated so a refresh cannot destroy it.
+The skill holds **no state**. It reads whatever files you already have, in
+whatever layout. Nothing below is required by it.
 
-## Telling your agent things
+## Get your records out
 
-A large part of what makes a local aggregate worth having is that you can just
-talk to it. Symptoms between visits, what was actually said in the room, what you
-tried and whether it helped, something that happened before the electronic record
-existed. Much of that exists nowhere else, because the chart only holds what
-somebody typed during an appointment.
+You are legally entitled to them:
 
-Two things about self-report that are worth knowing up front:
+- **HIPAA right of access** — your records within **30 days**. Statutory.
+- **21st Century Cures Act** information blocking rule — why patient API access
+  exists, and why "we don't do that" is usually not a valid answer.
 
-- **Qualitative self-report is reliable and valuable.** What something feels like,
-  what makes it worse, what order things happened in.
-- **Quantitative self-report should be treated as an estimate.** Durations, dates,
-  counts, severities. Remembered intervals tend to run long. Anchor them to a
-  dated document where one exists.
+### Epic / MyChart
 
-Nothing you tell your agent changes your chart. If something in the record is
-wrong, fixing it is a formal amendment request to the provider, and it needs to be
-tracked like any other open item. Acknowledgement is not completion, so check a
-later export to confirm the change actually landed.
+The only path verified end to end.
 
-## Which parts of this work for you
+1. Sign in to your MyChart instance. Each health system runs its own, so you need
+   a separate export from each.
+2. **Menu → Document Center → Requested Records**, then request a full record.
+   Some instances label it *Visit Records* or *Download My Record*.
+3. Choose **all visits** or the full date range rather than a single encounter.
+4. Wait. Generation is asynchronous, typically minutes to hours.
+5. Download the `.zip` when it appears. **The link expires, often in about a
+   week.**
 
-What is possible depends on two things: your AI tooling, and your provider's
-portal. Those vary a lot, and this project is honest about only having verified a
-corner of the space.
+⚠️ **Keep the zip.** It is your source of truth and the only durable artifact —
+the download link dies, and everything else regenerates from it.
 
-**Verified:** Epic / MyChart bulk export, converted and coordinated with Claude
-Code (filesystem access, scripts, persistent local state).
+Name downloads so source and date survive, e.g. `<institution>-<YYYY-MM-DD>.zip`.
+Freshness matters later and the filename is the simplest place to keep it.
 
-**Unverified but expected to work:** the doctrine in `skill/` assumes nothing
-about storage or tooling, so it should apply to any agent with any layout. The
-converters need C-CDA XML, so they should work with any portal that exports it.
+### Other portals
 
-**Not yet covered:** Oracle Health, athenahealth, eClinicalWorks, Kaiser,
-VA / Blue Button, and FHIR JSON bundles generally. Also every harness that isn't
-Claude Code: web chat, Claude Desktop with MCP, mobile, API.
+Look for a bulk export under a records, documents, or "share my record" section.
+Common outputs are C-CDA XML in a zip (what `converters/` handles) or a FHIR JSON
+bundle (not yet handled). See compatibility below.
 
-If you get this working somewhere not listed, that's the most useful thing you
-could send back.
+## What is in the zip
+
+An Epic export is an **IHE_XDM** package:
+
+```
+IHE_XDM/<PatientId>/DOC0001.XML     one C-CDA document per encounter
+IHE_XDM/<PatientId>/DOC0002.XML
+IHE_XDM/<PatientId>/STYLE.XSL       stylesheet for browser viewing
+HTML/                               a browsable viewer
+INDEX.HTM
+README - Open for Instructions.TXT
+```
+
+`<PatientId>` is assigned by the exporting system and differs per person, so
+never hardcode it. The `DOC*.XML` files are the data; everything else is
+presentation.
+
+## Convert
+
+Unpack each zip into a directory named `<institution>-extracted`. The converters
+key off that suffix to label the source, so any number of institutions work.
+
+```bash
+mkdir -p records && cd records
+unzip -q ../mercy-2026-07-28.zip    -d mercy-extracted
+unzip -q ../riverside-2026-07-28.zip -d riverside-extracted
+
+python3 ../converters/01_ccda_to_markdown.py
+python3 ../converters/02_extract_tables.py
+python3 ../converters/03_labs_csv.py
+```
+
+Run them **from the directory holding the `*-extracted` folders**, and in order.
+Each writes into `readable/`. Expect a document count, row counts per CSV, and a
+count of unmapped LOINC codes.
+
+## What you get
+
+```
+readable/
+  README.md                  index of every document, by source and date
+  timeline.md                all encounters chronologically, grouped by year
+  labs.csv                   every numeric result as one time series
+  diagnoses.csv
+  medications.csv
+  immunizations.csv
+  procedures.csv
+  <institution>/
+    summary/<Title>.md       undated documents (patient summary, continuity of care)
+    encounters/<YYYY>/<YYYY-MM-DD>_<Facility>.md
+```
+
+Date-prefixed filenames under year folders make chronological sort free and
+per-year globbing trivial.
+
+**Schemas**
+
+```
+labs.csv          date, source, analyte, value, unit, reference_range, flag
+diagnoses.csv     date, source, facility, text
+medications.csv   date, source, facility, text
+immunizations.csv date, source, facility, text
+procedures.csv    date, source, facility, text
+```
+
+Each encounter file opens with `Source`, `Date`, `Facility`, `Provider`, and
+`Origin` (the path of the XML it came from), then the document's sections as
+headings. Narrative text is verbatim — nothing rewritten, summarized, or
+inferred.
+
+### Notes on the data
+
+- **`03_labs_csv.py` maps 44 common LOINC codes** to readable names. Anything
+  unmapped comes through as `LOINC:<code>`, and the script prints how many.
+  Extend the `M` dict — and please send additions upstream.
+- ⚠️ **Units and reference ranges drift across decades.** The same measurand can
+  appear in units differing by orders of magnitude across a long record, and two
+  values sharing a nominal unit are not comparable if their ranges differ.
+  Normalize before comparing or charting.
+- ⚠️ **Absence from an export is not evidence of absence.** Exports carry
+  explicit incompleteness notices. Missing means *unknown*, not *no*.
+- **Radiology reports** usually come through; **images (DICOM) do not**, and are
+  requested separately from the radiology department.
+- Exports are **dated snapshots**. Nothing refreshes on its own. Track freshness
+  **per institution** — one recent export makes a stale one look current.
+
+## Working with an agent
+
+Point it at `readable/` and ask questions. The conversion matters more than it
+looks: raw C-CDA burns enormous context on namespaces, template OIDs, and
+boilerplate that carry no meaning, and that noise measurably degrades reasoning
+about the parts that do.
+
+Two rules keep regeneration safe:
+
+1. **The zip is the source of truth.** If a derived file disagrees with it, the
+   export wins.
+2. **Everything in `readable/` is disposable.** Regenerate rather than edit.
+   Hand-editing a derived file creates a second source of truth that silently
+   diverges.
+
+Anything you write yourself is a **source, not a derivative** — notes, symptom
+history, things said in a room that never got charted. Keep it *outside*
+`readable/` so a refresh cannot destroy it.
+
+When telling an agent things:
+
+- **Qualitative self-report is reliable** and often the most valuable input you
+  have. What it feels like, what makes it worse, what order things happened in.
+- **Quantitative self-report is an estimate.** Durations, dates, counts,
+  severities. Remembered intervals tend to run long — anchor them to a dated
+  document where one exists.
+- Nothing you tell an agent changes your chart. Correcting the record is a formal
+  **amendment request**, and acknowledgement is not completion — check a later
+  export to confirm it landed.
+
+## Tracking what is open
+
+Deliberately unspecified. A markdown list you maintain by hand works. So does a
+TSV. Use whatever you will actually keep current.
+
+Four properties are enough: **what it is, whose court the ball is in, when it
+last moved, and whether a date is attached.** Keep an append-only log of
+movements separate from current state, since "when did this last move" is the
+question everything turns on.
+
+Keep clinical content out of it. Name the action, never the reason — *"abdominal
+ultrasound ordered, never completed"*, not the indication behind it. That keeps
+the file safe to paste, share, or back up.
+
+`examples/reference-implementation/` is one worked version: TSV state, dormancy
+thresholds by category, and a receipt so "nothing today" is distinguishable from
+a check that silently broke. An example, not a requirement.
+
+## Compatibility
+
+| portal / EHR | status |
+|---|---|
+| **Epic / MyChart** | ✅ Verified. IHE_XDM zip of C-CDA XML. |
+| Oracle Health (Cerner) | ❓ Untested |
+| athenahealth | ❓ Untested |
+| eClinicalWorks / healow | ❓ Untested |
+| NextGen, Meditech, Veradigm | ❓ Untested |
+| Kaiser Permanente | ❓ Untested |
+| VA / My HealtheVet | ❓ Untested — Blue Button is the likely path |
+
+| harness | filesystem | persistent state | runs scripts |
+|---|---|---|---|
+| **Claude Code** | ✅ full | ✅ local files | ✅ |
+| Claude Desktop + MCP | via connectors | depends | via MCP |
+| API + your own code | whatever you build | whatever you build | ✅ |
+| Web chat | uploads only | project files at best | ❌ |
+| Mobile | ❌ | ❌ | ❌ |
+
+❓ means nobody has reported back, not that it fails. FHIR JSON bundles have no
+converter here yet and are probably the highest-value missing piece.
+
+## Troubleshooting
+
+**`docs: 0`, or no CSV rows** — the converters glob
+`*-extracted/IHE_XDM/*/DOC*.XML` from the current directory. Check you are in the
+parent of the `*-extracted` folders and that unzipping preserved the `IHE_XDM/`
+level.
+
+**`timeline.md: no dated encounters found`** — documents parsed but none carried
+an `encompassingEncounter` date. Common for summary-only exports. Per-document
+markdown still generates.
+
+**Many `LOINC:<code>` entries** — normal. Only 44 codes are mapped by name; the
+rest fall back to the code and remain usable.
+
+**Everything labeled the same source** — the slug comes from the directory name
+before `-extracted`. Two exports unpacked into one directory get one label.
+
+**Putting this in git?** Check `git config user.email` *before* the first commit.
+A global gitconfig stamps your real name and address onto every commit, it is
+invisible in the working tree, and it is not practically removable once pushed.
+See `skill/reference/getting-started.md` §3a.
 
 ## Contributing
 
-Pull requests welcome. What helps most is knowledge that only shows up when
-somebody actually tries this against a real institution: how to get an export out
-of a specific portal, what format it returns, what a clinic's published response
-window is, whether something here was wrong for you.
+Pull requests welcome. Most valuable is knowledge that only appears when somebody
+tries this against a real institution: the exact export path through a portal,
+what format it returns, a clinic's published response window, an unmapped LOINC
+code, whether something here was wrong for you.
+
+Issue templates for portal and harness reports are provided.
 
 > ### One absolute rule
 >
@@ -154,16 +288,16 @@ window is, whether something here was wrong for you.
 >
 > A public repository is permanent, cached, and indexed. You cannot take it back.
 >
-> A useful contribution almost never needs a real example anyway. "This portal
-> returns a zip of C-CDA XML and the link expires in seven days" is the whole
+> A useful contribution almost never needs a real example anyway. *"This portal
+> returns a zip of C-CDA XML and the link expires in seven days"* is the whole
 > contribution, and it says nothing about any patient.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
 MIT. See [LICENSE](LICENSE).
 
-This project is not affiliated with any health system, portal vendor, or
-electronic health record company. It gives no medical advice. If a situation
-looks urgent, contact your clinician or seek urgent care.
+Not affiliated with any health system, portal vendor, or EHR company. Gives no
+medical advice. If a situation looks urgent, contact your clinician or seek
+urgent care.
