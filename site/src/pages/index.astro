@@ -1,13 +1,15 @@
 ---
-// The page body comes from the repository README, synced at build time by
-// scripts/sync-readme.mjs. Edit ../../README.md, never _readme.md.
-import { Content } from './_readme.md';
+import providersData from '../data/providers.json';
+import agentsData from '../data/agents.json';
 import '../styles/global.css';
 
+const providers = providersData.providers;
+const agents = agentsData.agents;
+
 const repo = 'https://github.com/landon9720/care-coordinator';
-const title = 'care-coordinator';
+const title = 'Care Coordinator — keep track of your own medical care';
 const description =
-  'Tools and doctrine for using an AI agent to get your medical records out of a patient portal, make them readable, and keep track of what is actually open.';
+  'A guide to getting your medical records out of your health system and using an AI assistant to keep track of what is still unfinished. Written for people who do not consider themselves technical.';
 ---
 
 <html lang="en">
@@ -25,42 +27,222 @@ const description =
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>🩺</text></svg>"
     />
   </head>
-  <body>
+  <body class="guide">
     <main class="wrap">
       <header class="masthead">
-        <h1>care-coordinator</h1>
-        <p class="tagline">{description}</p>
-        <p class="links">
-          <a href={repo}>github.com/landon9720/care-coordinator</a> · MIT
+        <h1>Things fall through the cracks in medical care.</h1>
+        <p class="lede">
+          A doctor orders a test. Finishing it means <em>you</em> have to call and
+          book it. If you don't, often nobody notices. Not the doctor, not the
+          clinic, not any computer system. It can sit for years.
+        </p>
+        <p class="lede">
+          This is a free, open guide to getting your own medical records onto your
+          own computer, and using an AI assistant to keep track of what is still
+          unfinished.
+        </p>
+        <p class="reassure">
+          <strong>You do not need to be technical.</strong> You will not have to
+          write code, and you will not have to use anything that looks like a
+          black screen with green text. If you can install a program and type a
+          sentence, you can do this.
         </p>
       </header>
 
-      <div class="prose">
-        <Content />
-      </div>
+      <section class="picker" aria-labelledby="picker-heading">
+        <h2 id="picker-heading">Let's find your situation</h2>
+        <p>
+          Answer two questions and we will show you what we know. We are honest
+          about the gaps. This is a young project, and for most combinations
+          nobody has written the details down yet.
+        </p>
+
+        <div class="field">
+          <label for="provider">
+            <span class="step">1</span>
+            Where do you see your doctor?
+          </label>
+          <p class="hint">
+            Not sure? Think about the website you use to check test results or
+            send your doctor a message. What is it called?
+          </p>
+          <select id="provider">
+            <option value="">— Please choose —</option>
+            {providers.map((p) => (
+              <option value={p.id}>
+                {p.name}{p.vendor ? ` (${p.vendor})` : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="agent">
+            <span class="step">2</span>
+            Which AI assistant do you have?
+          </label>
+          <p class="hint">
+            There is no wrong answer. "I don't have one yet" is the most common
+            one, and it is fine.
+          </p>
+          <select id="agent">
+            <option value="">— Please choose —</option>
+            {agents.map((a) => (
+              <option value={a.id}>
+                {a.name}{a.recommended ? ' — recommended' : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+      </section>
+
+      <section id="results" aria-live="polite"></section>
 
       <footer>
         <p>
-          Not affiliated with any health system, portal vendor, or electronic
-          health record company. This project gives no medical advice. If a
-          situation looks urgent, contact your clinician or seek urgent care.
+          <a href={repo}>This project is open source.</a> Anything missing above
+          can be filled in by anyone, and corrections are welcome. There is a
+          <a href={`${repo}/blob/main/CONTRIBUTING.md`}>guide to contributing</a>.
         </p>
         <p>
-          This page is generated from the repository README. To change it, <a
-            href={`${repo}/blob/main/README.md`}>edit the README</a
-          >.
+          <a href="/technical">Technical documentation</a> — for people who are
+          comfortable with a command line.
+        </p>
+        <p class="fineprint">
+          Not affiliated with any hospital, health system, or software company.
+          This site gives no medical advice, and neither does the tool it
+          describes. Both are about paperwork and dates, not about your health.
+          <strong>
+            If something feels urgent, call your doctor or seek urgent care.
+          </strong>
         </p>
       </footer>
     </main>
 
-    <script is:inline>
-      // Wide tables must scroll inside themselves, never the page body.
-      for (const t of document.querySelectorAll('.prose table')) {
-        const box = document.createElement('div');
-        box.className = 'table-scroll';
-        t.parentNode.insertBefore(box, t);
-        box.appendChild(t);
+    <script is:inline define:vars={{ providers, agents, repo }}>
+      const $ = (id) => document.getElementById(id);
+      const results = $('results');
+      const esc = (s) =>
+        String(s).replace(
+          /[&<>"]/g,
+          (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]
+        );
+      const ol = (items) =>
+        `<ol>${items.map((s) => `<li>${esc(s)}</li>`).join('')}</ol>`;
+      const rec = agents.find((x) => x.recommended);
+
+      function providerBlock(p) {
+        if (!p) return '';
+        if (p.status === 'verified' && p.steps.length) {
+          return `
+            <div class="card">
+              <h3><span class="num">1</span> Get your records from ${esc(p.name)}</h3>
+              <p class="verified">Somebody has done this and written down the steps.</p>
+              ${ol(p.steps)}
+              ${p.format ? `<p class="meta">What you get: ${esc(p.format)}. It will look like nonsense if you open it. That is expected — making it readable is the assistant's job.</p>` : ''}
+              ${p.warnings.map((w) => `<p class="warn">${esc(w)}</p>`).join('')}
+            </div>`;
+        }
+        return `
+          <div class="card">
+            <h3><span class="num">1</span> Get your records${p.id !== 'other' ? ` from ${esc(p.name)}` : ''}</h3>
+            <p class="unknown">We don't have step-by-step instructions for this one yet.</p>
+            <p>Here is the general approach, which works almost everywhere:</p>
+            <ol>
+              <li>Sign in to the website you use to check test results or message your doctor.</li>
+              <li>Look through the menu for anything called <em>Records</em>, <em>Documents</em>, <em>Health Record</em>, <em>Download</em>, or <em>Share my record</em>. It is usually not on the front page.</li>
+              <li>Ask for your <strong>complete</strong> record, or <strong>all visits</strong> — not a single appointment.</li>
+              <li>It may take minutes or hours to prepare. Come back later and download the file.</li>
+              <li>Save it somewhere you will find it again, and don't delete it. Download links usually expire after a week or so.</li>
+            </ol>
+            ${p.warnings.map((w) => `<p class="warn">${esc(w)}</p>`).join('')}
+            <p class="rights"><strong>If they give you trouble:</strong> in the United States you have a legal right to your records within <strong>30 days</strong>, under the law called HIPAA. A second law, the 21st Century Cures Act, says they may not block your electronic access. You are allowed to say this out loud, and you do not have to explain why you want them.</p>
+            <p class="ask">Once you work it out, <a href="${repo}/issues/new">please tell us how you did it</a> so the next person has real instructions. Describe the buttons you clicked. Never anything about your health.</p>
+          </div>`;
       }
+
+      function agentBlock(a) {
+        if (!a) return '';
+        if (a.id === 'none') {
+          return `
+            <div class="card">
+              <h3><span class="num">2</span> Get an AI assistant</h3>
+              <p>We suggest <strong>${esc(rec.name)}</strong>.</p>
+              <p>${esc(rec.summary)}</p>
+              <p class="meta">${esc(rec.cost)}</p>
+              ${ol(rec.setup)}
+              ${rec.notes.map((n) => `<p class="note">${esc(n)}</p>`).join('')}
+            </div>`;
+        }
+        return `
+          <div class="card">
+            <h3><span class="num">2</span> Set up ${esc(a.name)}</h3>
+            ${
+              a.status === 'verified'
+                ? `<p class="verified">This one has been used for the whole process, start to finish.</p>`
+                : `<p class="unknown">Nobody has reported using this one all the way through. The general approach still applies.</p>`
+            }
+            <p>${esc(a.summary)}</p>
+            ${a.cost ? `<p class="meta">${esc(a.cost)}</p>` : ''}
+            ${a.setup.length ? ol(a.setup) : ''}
+            ${a.notes.map((n) => `<p class="note">${esc(n)}</p>`).join('')}
+            ${
+              !a.recommended
+                ? `<p class="note">If this turns out to be frustrating, <strong>${esc(rec.name)}</strong> is the one that can handle a whole folder of records at once instead of one file at a time.</p>`
+                : ''
+            }
+          </div>`;
+      }
+
+      function goBlock(a) {
+        const t = a && a.firstMessage ? a : rec;
+        if (!t || !t.firstMessage) return '';
+        const swap = t.id !== (a && a.id);
+        return `
+          <div class="card go">
+            <h3><span class="num">3</span> Now just ask</h3>
+            ${swap ? `<p class="note">This step assumes ${esc(t.name)}, from step 2.</p>` : ''}
+            <p>Open ${esc(t.name)} and type this. You can copy it.</p>
+            <div class="prompt">
+              <p id="promptText">${esc(t.firstMessage)}</p>
+              <button type="button" id="copyBtn">Copy this</button>
+            </div>
+            <p>That is genuinely it. It will fetch what it needs, ask your permission before touching anything on your computer, and walk you through the rest in plain language. After that you can talk to it normally — <em>"what am I forgetting"</em>, <em>"did I ever get that scan"</em>, <em>"what should I ask about at my appointment"</em>.</p>
+            <p class="note">It will not tell you what your test results mean, and it should not. What it does is keep track of what was started and never finished, and what has gone quiet. Questions about your health go to your doctor.</p>
+          </div>`;
+      }
+
+      function render() {
+        const p = providers.find((x) => x.id === $('provider').value);
+        const a = agents.find((x) => x.id === $('agent').value);
+        if (!p && !a) {
+          results.innerHTML = '';
+          return;
+        }
+        results.innerHTML = `
+          <h2>Your steps</h2>
+          ${providerBlock(p)}
+          ${agentBlock(a)}
+          ${p && a ? goBlock(a) : '<p class="more">Answer both questions above to see the last step.</p>'}
+        `;
+        const btn = $('copyBtn');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            navigator.clipboard
+              .writeText($('promptText').textContent)
+              .then(() => {
+                btn.textContent = 'Copied';
+                setTimeout(() => (btn.textContent = 'Copy this'), 2000);
+              })
+              .catch(() => {
+                btn.textContent = 'Select it and copy';
+              });
+          });
+        }
+      }
+
+      $('provider').addEventListener('change', render);
+      $('agent').addEventListener('change', render);
     </script>
   </body>
 </html>

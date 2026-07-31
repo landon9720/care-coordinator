@@ -1,0 +1,130 @@
+{
+  "_comment": [
+    "Patient portals, and what we know about getting a full record out of each.",
+    "",
+    "TO ADD OR CORRECT ONE: edit this file and open a pull request. You do not",
+    "need to know JavaScript. Copy an existing block, change the values, keep the",
+    "commas and braces where they are.",
+    "",
+    "RULES:",
+    "  - 'status' is 'verified' only if someone actually did it end to end.",
+    "    Otherwise 'unknown'. Do not guess a menu path you have not seen.",
+    "  - Describe how the SYSTEM behaves. Never anything about a person's health.",
+    "  - 'steps' are what a non-technical person clicks, in order.",
+    "  - Leave 'steps' empty when unknown. Empty is honest; invented is not."
+  ],
+
+  "providers": [
+    {
+      "id": "epic",
+      "name": "MyChart",
+      "vendor": "Epic",
+      "aka": "Used by most large US hospital systems. If your portal is called MyChart, or your hospital's own name plus 'Chart', this is it.",
+      "status": "verified",
+      "format": "A .zip file containing C-CDA XML documents",
+      "steps": [
+        "Sign in to your hospital's MyChart website. If you have records at more than one hospital system, you will need to do this once for each.",
+        "Open the menu and look for 'Document Center'. Inside it, choose 'Requested Records'.",
+        "Choose to request your full record. Some hospitals label this 'Visit Records' or 'Download My Record'.",
+        "Ask for all visits, or the widest date range offered, rather than a single appointment.",
+        "The file is not ready immediately. It can take minutes or hours. You may get an email or a message in the portal when it is done.",
+        "Come back and download the .zip file. Save it somewhere you will find again."
+      ],
+      "warnings": [
+        "The download link expires, often after about a week. Download it promptly and keep the file."
+      ]
+    },
+    {
+      "id": "kaiser",
+      "name": "Kaiser Permanente",
+      "vendor": "Kaiser",
+      "aka": "kp.org",
+      "status": "unknown",
+      "format": "",
+      "steps": [],
+      "warnings": []
+    },
+    {
+      "id": "cerner",
+      "name": "HealtheLife",
+      "vendor": "Oracle Health (formerly Cerner)",
+      "aka": "Often branded with your hospital's name.",
+      "status": "unknown",
+      "format": "",
+      "steps": [],
+      "warnings": []
+    },
+    {
+      "id": "athena",
+      "name": "athenaPatient",
+      "vendor": "athenahealth",
+      "aka": "Common at independent and mid-size practices.",
+      "status": "unknown",
+      "format": "",
+      "steps": [],
+      "warnings": []
+    },
+    {
+      "id": "healow",
+      "name": "healow",
+      "vendor": "eClinicalWorks",
+      "aka": "Often used by smaller clinics and specialist practices.",
+      "status": "unknown",
+      "format": "",
+      "steps": [],
+      "warnings": []
+    },
+    {
+      "id": "followmyhealth",
+      "name": "FollowMyHealth",
+      "vendor": "Veradigm (formerly Allscripts)",
+      "aka": "",
+      "status": "unknown",
+      "format": "",
+      "steps": [],
+      "warnings": []
+    },
+    {
+      "id": "meditech",
+      "name": "MHealth / Meditech portal",
+      "vendor": "Meditech",
+      "aka": "Common at community and rural hospitals.",
+      "status": "unknown",
+      "format": "",
+      "steps": [],
+      "warnings": []
+    },
+    {
+      "id": "nextgen",
+      "name": "NextGen Patient Portal",
+      "vendor": "NextGen Healthcare",
+      "aka": "",
+      "status": "unknown",
+      "format": "",
+      "steps": [],
+      "warnings": []
+    },
+    {
+      "id": "va",
+      "name": "My HealtheVet",
+      "vendor": "US Department of Veterans Affairs",
+      "aka": "For veterans receiving VA care.",
+      "status": "unknown",
+      "format": "",
+      "steps": [],
+      "warnings": [
+        "The VA has a long-standing feature called Blue Button for downloading your record. That is the most likely path, but nobody has confirmed the details here yet."
+      ]
+    },
+    {
+      "id": "other",
+      "name": "Something else, or I don't know",
+      "vendor": "",
+      "aka": "Pick this if your portal is not listed, or you are not sure which one you have.",
+      "status": "unknown",
+      "format": "",
+      "steps": [],
+      "warnings": []
+    }
+  ]
+}

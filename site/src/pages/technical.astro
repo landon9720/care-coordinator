@@ -1,0 +1,67 @@
+---
+// The page body comes from the repository README, synced at build time by
+// scripts/sync-readme.mjs. Edit ../../README.md, never _readme.md.
+import { Content } from './_readme.md';
+import '../styles/global.css';
+
+const repo = 'https://github.com/landon9720/care-coordinator';
+const title = 'care-coordinator — technical documentation';
+const description =
+  'Tools and doctrine for using an AI agent to get your medical records out of a patient portal, make them readable, and keep track of what is actually open.';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href="https://open-care-coordinator.vercel.app/technical" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>🩺</text></svg>"
+    />
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="masthead">
+        <h1>care-coordinator</h1>
+        <p class="tagline">{description}</p>
+        <p class="links">
+          <a href="/">← Start here (non-technical guide)</a> ·
+          <a href={repo}>GitHub</a> · MIT
+        </p>
+      </header>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <footer>
+        <p>
+          Not affiliated with any health system, portal vendor, or electronic
+          health record company. This project gives no medical advice. If a
+          situation looks urgent, contact your clinician or seek urgent care.
+        </p>
+        <p>
+          This page is generated from the repository README. To change it, <a
+            href={`${repo}/blob/main/README.md`}>edit the README</a
+          >.
+        </p>
+      </footer>
+    </main>
+
+    <script is:inline>
+      // Wide tables must scroll inside themselves, never the page body.
+      for (const t of document.querySelectorAll('.prose table')) {
+        const box = document.createElement('div');
+        box.className = 'table-scroll';
+        t.parentNode.insertBefore(box, t);
+        box.appendChild(t);
+      }
+    </script>
+  </body>
+</html>

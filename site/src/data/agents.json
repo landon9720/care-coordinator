@@ -1,0 +1,101 @@
+{
+  "_comment": [
+    "AI tools people might use, and what each can actually do with medical records.",
+    "",
+    "TO ADD OR CORRECT ONE: edit this file and open a pull request.",
+    "",
+    "RULES:",
+    "  - 'status' is 'verified' only if someone did the whole thing with it.",
+    "  - 'terminal' true means the person has to type commands. For most readers",
+    "    here that is a dealbreaker, so be accurate about it.",
+    "  - Describe the TOOL. Never anything about a person's health."
+  ],
+
+  "agents": [
+    {
+      "id": "claude-code-desktop",
+      "name": "Claude Code",
+      "vendor": "Anthropic",
+      "recommended": true,
+      "status": "verified",
+      "terminal": false,
+      "summary": "A desktop app for Mac and Windows. It is built for programmers, which sounds discouraging, but the part you need is not programming. You download it, sign in, and type ordinary sentences. It is the only option that can open your downloaded records, read all of them, and remember things between conversations.",
+      "cost": "Requires a paid Claude subscription. There is no free tier that does this.",
+      "setup": [
+        "Go to claude.com/download and get Claude Code for your computer, Mac or Windows.",
+        "Install it the same way you would install any other program.",
+        "Open it and sign in. If you do not have an account, it will walk you through making one and choosing a paid plan.",
+        "When it asks which folder to work in, make a new folder called 'my-records' and choose that."
+      ],
+      "firstMessage": "Please set up the care-coordinator skill from https://github.com/landon9720/care-coordinator, then help me organize my medical records.",
+      "notes": [
+        "You never have to open a terminal. The app has a place to type, and you type in plain English.",
+        "It will ask permission before doing anything to your files. Read what it asks and say yes or no."
+      ]
+    },
+    {
+      "id": "claude-desktop",
+      "name": "Claude desktop app",
+      "vendor": "Anthropic",
+      "recommended": false,
+      "status": "unknown",
+      "terminal": false,
+      "summary": "The regular Claude app. Friendlier looking, but it cannot open a folder full of files and work through them on its own the way Claude Code can. You would be uploading files one at a time.",
+      "cost": "Free tier exists; larger records will need a paid plan.",
+      "setup": [
+        "Download the Claude app from claude.com and sign in.",
+        "You can upload individual documents and ask about them."
+      ],
+      "firstMessage": "",
+      "notes": [
+        "Workable for a small number of documents. Painful for a full medical history, which is often dozens of files."
+      ]
+    },
+    {
+      "id": "claude-web",
+      "name": "Claude in a web browser",
+      "vendor": "Anthropic",
+      "recommended": false,
+      "status": "unknown",
+      "terminal": false,
+      "summary": "Claude.ai in your browser. Same limitation as the desktop app: you upload documents by hand, and it does not keep track of things between conversations.",
+      "cost": "Free tier exists; larger records will need a paid plan.",
+      "setup": [
+        "Go to claude.ai and sign in.",
+        "Upload documents into a Project so they stay available across conversations."
+      ],
+      "firstMessage": "",
+      "notes": []
+    },
+    {
+      "id": "chatgpt",
+      "name": "ChatGPT",
+      "vendor": "OpenAI",
+      "recommended": false,
+      "status": "unknown",
+      "terminal": false,
+      "summary": "Can read documents you upload. Nobody has reported using it for this end to end, so we cannot tell you how well it works.",
+      "cost": "Free tier exists; larger records will need a paid plan.",
+      "setup": [
+        "Sign in at chatgpt.com and upload your documents."
+      ],
+      "firstMessage": "",
+      "notes": [
+        "The general approach on this site still applies. The specific steps have not been tested."
+      ]
+    },
+    {
+      "id": "none",
+      "name": "I don't have one yet",
+      "vendor": "",
+      "recommended": false,
+      "status": "unknown",
+      "terminal": false,
+      "summary": "That is fine, and it is the most common answer. Pick this and we will tell you what to get.",
+      "cost": "",
+      "setup": [],
+      "firstMessage": "",
+      "notes": []
+    }
+  ]
+}
