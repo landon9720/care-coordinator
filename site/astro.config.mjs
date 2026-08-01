@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://open-care-coordinator.vercel.app',
+  site: 'https://care.landon9720.com',
   vite: {
     plugins: [tailwindcss()]
   },

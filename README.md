@@ -4,7 +4,7 @@ Get your medical records out of a patient portal, convert them into text you and
 an AI agent can actually read, and track what is still open.
 
 <!-- site:skip -->
-**[open-care-coordinator.vercel.app](https://open-care-coordinator.vercel.app)** —
+**[care.landon9720.com](https://care.landon9720.com)** —
 this README as a web page.
 <!-- /site:skip -->
 
