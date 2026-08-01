@@ -211,20 +211,28 @@ noticed the item became actionable.
 
 ### When a reply arrives, check it against what was asked
 
-A reply feels like closure. It usually is not. Someone asks five things, the
-clinic answers two, and the other three vanish — not because anyone refused, but
-because the response arrived and everybody moved on.
+A reply feels like closure. It usually is not. Questions go unanswered not
+because anyone refused, but because a response arrived and everybody moved on.
+
+⚠️ **Count questions, not messages or bullets.** One ask routinely contains
+several questions. A reply that addresses one of them scores as handled unless
+you are enumerating at the level of the questions themselves.
+
+⚠️ **The partial is the dangerous category — more than the untouched one.** An
+ask that got no response at all is at least visibly missing. A partial *reads as
+answered*, closes the thread in everyone's mind, and is the one that actually
+slips.
 
 So whenever a message, result, or call-back comes in:
 
-1. **Enumerate what was actually asked**, from the original message rather than
-   from memory.
-2. **Mark each one answered, partially answered, or untouched.**
+1. **Enumerate every question that was asked**, from the original message rather
+   than from memory, counting questions rather than messages.
+2. **Mark each one answered, partial, or untouched.**
 3. **Verify the claims against the record, not against the reply.** If it says a
-   test was ordered, look for the order. A reply is a statement of intent; the
-   record is what happened.
-4. **Reopen or create an item for everything untouched**, and say plainly which
-   asks went unanswered.
+   test was ordered, look for the order. A reply states intent; the record shows
+   what happened.
+4. **Reopen or create an item for every question that was partial or untouched**,
+   and say plainly which ones went unanswered.
 
 This is one of the highest-yield things this skill does, and nothing else in the
 system does it. Clinics track their own queue of replies sent. Nobody tracks
