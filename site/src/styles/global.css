@@ -383,3 +383,43 @@ body.guide .resolve {
 }
 
 body.guide .rights-card { border-left: 4px solid var(--warn-edge); }
+
+/* Capabilities. This is the product, so it comes before the friction --
+   a reader has to want the thing before they will accept the setup cost. */
+
+body.guide .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+  margin: 1.6rem 0;
+}
+
+body.guide .cap {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 1.1rem 1.2rem;
+  background: var(--code-bg);
+}
+
+body.guide .cap h3 {
+  font-size: 1.15rem;
+  margin: 0 0 0.5rem;
+  color: var(--accent);
+}
+
+body.guide .cap p { margin: 0; font-size: 1.05rem; }
+
+body.guide .asks { margin-top: 2rem; margin-bottom: 0.8rem; }
+
+body.guide .examples {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+body.guide .examples li {
+  border-left: 3px solid var(--accent);
+  padding: 0.55rem 0 0.55rem 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}

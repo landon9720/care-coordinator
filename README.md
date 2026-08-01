@@ -16,7 +16,18 @@ Three parts, usable independently:
 | `skill/` | A [Claude Skill](https://docs.claude.com/en/docs/claude-code/skills) telling an agent what to track and when to speak up. |
 | `examples/` | An optional reference implementation of a dormancy check. |
 
-It coordinates logistics. It gives no medical advice.
+## What it does
+
+1. **Get the records.** Bulk export from a patient portal, with the legal
+   backing to insist on it.
+2. **Make them readable.** C-CDA XML into markdown and CSV, so a person and a
+   model can both work with them.
+3. **Capture what isn't charted.** Symptoms between visits, what was said in the
+   room, history predating the electronic record. Stored as a first-class source.
+4. **Produce things.** Messages to clinics, records requests, amendment
+   requests, appointment prep, summaries for a new provider, calendar events.
+5. **Track what is open.** What was started, whose move it is, and how long it
+   has been sitting.
 
 ## Why track dormancy
 

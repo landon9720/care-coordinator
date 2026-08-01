@@ -44,6 +44,61 @@ const description =
         </p>
       </header>
 
+      <section class="does" aria-labelledby="does-heading">
+        <h2 id="does-heading">What you get</h2>
+        <p>
+          Your whole medical history, on your own computer, in a form you and an
+          assistant can both read. Then you can just ask for things.
+        </p>
+
+        <div class="grid">
+          <div class="cap">
+            <h3>Get your records</h3>
+            <p>
+              Every visit, test result, medication, immunization and procedure
+              your health systems have on file — downloaded and turned into
+              plain readable text instead of the machine format they arrive in.
+            </p>
+          </div>
+          <div class="cap">
+            <h3>Add what isn't in the chart</h3>
+            <p>
+              Tell it what you remember and it writes it down: symptoms between
+              visits, what a doctor actually said, what you tried, things that
+              happened before any of this was computerized. Most of your history
+              is not in your record.
+            </p>
+          </div>
+          <div class="cap">
+            <h3>Get things written for you</h3>
+            <p>
+              Messages to your clinic. Requests for records from an old doctor.
+              A page to bring to your appointment with what has happened and what
+              to ask. A summary for a new specialist. Corrections when the record
+              is wrong.
+            </p>
+          </div>
+          <div class="cap">
+            <h3>Stop losing track</h3>
+            <p>
+              It knows what was started and never finished, and how long it has
+              been sitting. The scan you never booked. The referral that went
+              nowhere. The message nobody answered.
+            </p>
+          </div>
+        </div>
+
+        <p class="asks">Once it is set up, this is what using it looks like:</p>
+        <ul class="examples">
+          <li>“What am I waiting on right now?”</li>
+          <li>“Did I ever get that scan they ordered?”</li>
+          <li>“Write to my clinic and ask where my referral went.”</li>
+          <li>“I have an appointment Thursday. What should I bring up?”</li>
+          <li>“Put together a summary of my history for a new specialist.”</li>
+          <li>“Get my records from the clinic I used to go to.”</li>
+        </ul>
+      </section>
+
       <section class="honest" aria-labelledby="honest-heading">
         <h2 id="honest-heading">Two parts of this are genuinely hard</h2>
         <p>
@@ -257,8 +312,9 @@ const description =
               <p id="promptText">${esc(t.firstMessage)}</p>
               <button type="button" id="copyBtn">Copy this</button>
             </div>
-            <p>That is genuinely it. It will fetch what it needs, ask your permission before touching anything on your computer, and walk you through the rest in plain language. After that you can talk to it normally — <em>"what am I forgetting"</em>, <em>"did I ever get that scan"</em>, <em>"what should I ask about at my appointment"</em>.</p>
-            <p class="note">It will not tell you what your test results mean, and it should not. What it does is keep track of what was started and never finished, and what has gone quiet. Questions about your health go to your doctor.</p>
+            <p>That is genuinely it. It will fetch what it needs, ask your permission before touching anything on your computer, and walk you through the rest in plain language.</p>
+            <p>From there you talk to it normally. Ask it to open your records and tell you what it found. Ask what you are waiting on. Ask it to write to your clinic, or to put together what you should raise at your next appointment. Tell it things it should know that your chart does not.</p>
+            <p class="note">It drafts; you send. Nothing goes to a doctor, a clinic, or a portal without you reading it first.</p>
           </div>`;
       }
 
