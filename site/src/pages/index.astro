@@ -9,7 +9,7 @@ const agents = agentsData.agents;
 const repo = 'https://github.com/landon9720/care-coordinator';
 const title = 'Care Coordinator — keep track of your own medical care';
 const description =
-  'A guide to getting your medical records out of your health system and using an AI assistant to keep track of what is still unfinished. Written for people who do not consider themselves technical.';
+  'A guide for anyone trying to stay on top of their own medical care, or someone else\u2019s. How to get your records out of your health system, and how to use an AI assistant to track what was started and never finished. Honest about the two hard parts.';
 ---
 
 <html lang="en">
@@ -37,17 +37,57 @@ const description =
           clinic, not any computer system. It can sit for years.
         </p>
         <p class="lede">
-          This is a free, open guide to getting your own medical records onto your
-          own computer, and using an AI assistant to keep track of what is still
-          unfinished.
-        </p>
-        <p class="reassure">
-          <strong>You do not need to be technical.</strong> You will not have to
-          write code, and you will not have to use anything that looks like a
-          black screen with green text. If you can install a program and type a
-          sentence, you can do this.
+          This is a free guide to getting your own medical records onto your own
+          computer, and using an AI assistant to keep track of what is still
+          unfinished. It works the same whether you are doing this for yourself or
+          for someone you are looking after.
         </p>
       </header>
+
+      <section class="honest" aria-labelledby="honest-heading">
+        <h2 id="honest-heading">Two parts of this are genuinely hard</h2>
+        <p>
+          We would rather tell you now than have you think you did something
+          wrong when you hit them.
+        </p>
+
+        <div class="hard">
+          <h3>Getting an AI assistant set up</h3>
+          <p>
+            You will download a program, create an account, and enter a payment
+            method. <strong>It costs money.</strong> There is no free option that
+            does this part well. If you have never installed something like this,
+            the first half hour feels unfamiliar.
+          </p>
+          <p class="fix">
+            That is the whole difficulty, and it is a one-time cost. There is no
+            programming. You will not see a black screen with green text. After
+            setup, you type ordinary sentences.
+          </p>
+        </div>
+
+        <div class="hard">
+          <h3>Getting your records out</h3>
+          <p>
+            Every health system buries this somewhere different, calls it
+            something different, and makes you wait for it. Some staff do not know
+            the feature exists. You may have to ask more than once.
+          </p>
+          <p class="fix">
+            You have a legal right to these records, and that matters more than it
+            sounds — it turns the conversation from a favor you are asking into a
+            request they are required to fulfill. We will show you the words.
+          </p>
+        </div>
+
+        <p class="resolve">
+          Neither one requires a skill you do not have. Both are one-time. Once
+          they are done, the ongoing part is just asking questions in plain
+          language. People who end up here are usually dealing with something
+          real, for themselves or someone they love — if that is you, this is well
+          within what you can get through.
+        </p>
+      </section>
 
       <section class="picker" aria-labelledby="picker-heading">
         <h2 id="picker-heading">Let's find your situation</h2>
@@ -151,8 +191,23 @@ const description =
               <li>Save it somewhere you will find it again, and don't delete it. Download links usually expire after a week or so.</li>
             </ol>
             ${p.warnings.map((w) => `<p class="warn">${esc(w)}</p>`).join('')}
-            <p class="rights"><strong>If they give you trouble:</strong> in the United States you have a legal right to your records within <strong>30 days</strong>, under the law called HIPAA. A second law, the 21st Century Cures Act, says they may not block your electronic access. You are allowed to say this out loud, and you do not have to explain why you want them.</p>
             <p class="ask">Once you work it out, <a href="${repo}/issues/new">please tell us how you did it</a> so the next person has real instructions. Describe the buttons you clicked. Never anything about your health.</p>
+          </div>`;
+      }
+
+      function rightsBlock(p) {
+        if (!p) return '';
+        return `
+          <div class="card rights-card">
+            <h3>If they give you trouble</h3>
+            <p>This happens, and it is not a sign you did anything wrong. Staff at the front desk often do not know this feature exists.</p>
+            <p>In the United States you have a <strong>legal right</strong> to a copy of your records, and they have <strong>30 days</strong> to give it to you. The law is HIPAA. A second law, the 21st Century Cures Act, says they may not block your electronic access. <strong>You do not have to explain why you want them.</strong></p>
+            <p>If you need to say it out loud, or write it in a message through the portal, this is enough:</p>
+            <div class="prompt">
+              <p id="rightsText">I am making a request under my HIPAA right of access. I would like a complete electronic copy of my medical record. I understand this must be provided within 30 days.</p>
+              <button type="button" id="copyRights">Copy this</button>
+            </div>
+            <p class="note">Ask for it in writing through the portal if you can. It creates a dated record of when you asked, which is exactly the kind of thing that otherwise gets forgotten.</p>
           </div>`;
       }
 
@@ -217,23 +272,29 @@ const description =
         results.innerHTML = `
           <h2>Your steps</h2>
           ${providerBlock(p)}
+          ${rightsBlock(p)}
           ${agentBlock(a)}
           ${p && a ? goBlock(a) : '<p class="more">Answer both questions above to see the last step.</p>'}
         `;
-        const btn = $('copyBtn');
-        if (btn) {
-          btn.addEventListener('click', () => {
-            navigator.clipboard
-              .writeText($('promptText').textContent)
-              .then(() => {
-                btn.textContent = 'Copied';
-                setTimeout(() => (btn.textContent = 'Copy this'), 2000);
-              })
-              .catch(() => {
-                btn.textContent = 'Select it and copy';
-              });
-          });
-        }
+        wireCopy('copyBtn', 'promptText');
+        wireCopy('copyRights', 'rightsText');
+      }
+
+      function wireCopy(btnId, textId) {
+        const btn = $(btnId);
+        const src = $(textId);
+        if (!btn || !src) return;
+        btn.addEventListener('click', () => {
+          navigator.clipboard
+            .writeText(src.textContent.trim())
+            .then(() => {
+              btn.textContent = 'Copied';
+              setTimeout(() => (btn.textContent = 'Copy this'), 2000);
+            })
+            .catch(() => {
+              btn.textContent = 'Select it and copy';
+            });
+        });
       }
 
       $('provider').addEventListener('change', render);
