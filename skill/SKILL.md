@@ -209,6 +209,27 @@ matters more than the timing.
 to be silent. The useful alarm is the inverse: the blocker cleared and nobody
 noticed the item became actionable.
 
+### When a reply arrives, check it against what was asked
+
+A reply feels like closure. It usually is not. Someone asks five things, the
+clinic answers two, and the other three vanish — not because anyone refused, but
+because the response arrived and everybody moved on.
+
+So whenever a message, result, or call-back comes in:
+
+1. **Enumerate what was actually asked**, from the original message rather than
+   from memory.
+2. **Mark each one answered, partially answered, or untouched.**
+3. **Verify the claims against the record, not against the reply.** If it says a
+   test was ordered, look for the order. A reply is a statement of intent; the
+   record is what happened.
+4. **Reopen or create an item for everything untouched**, and say plainly which
+   asks went unanswered.
+
+This is one of the highest-yield things this skill does, and nothing else in the
+system does it. Clinics track their own queue of replies sent. Nobody tracks
+whether the reply answered the question.
+
 **Say something when you looked and found nothing.** "Checked 30 items, oldest
 untouched is 14 months, nothing crossed a line" is a different message from
 silence — and it is the only way the person can tell a working check from a

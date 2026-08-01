@@ -28,7 +28,9 @@ Three parts, usable independently:
 4. **Produce things.** Messages to clinics, records requests, amendment
    requests, appointment prep, summaries for a new provider, calendar events.
 5. **Track what is open.** What was started, whose move it is, and how long it
-   has been sitting.
+   has been sitting — including checking each incoming reply against what was
+   actually asked, since a partial answer reads as closure and the unanswered
+   part disappears.
 
 ## Why track dormancy
 
