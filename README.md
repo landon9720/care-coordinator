@@ -18,8 +18,9 @@ Three parts, usable independently:
 
 ## What it does
 
-1. **Get the records.** Bulk export from a patient portal, with the legal
-   backing to insist on it.
+1. **Get the records.** The agent drives the portal itself — navigating menus,
+   requesting the export, downloading and unpacking it — with the legal backing
+   to insist when a system resists.
 2. **Make them readable.** C-CDA XML into markdown and CSV, so a person and a
    model can both work with them.
 3. **Capture what isn't charted.** Symptoms between visits, what was said in the
@@ -75,6 +76,12 @@ You are legally entitled to them:
 ### Epic / MyChart
 
 The only path verified end to end.
+
+An agent with browser control can do this whole sequence. Credentials should come
+from a password manager or an already-authenticated session — never plaintext in
+the conversation. Portal sessions expire in roughly 15–20 minutes, and these are
+heavy SPAs where the URL often does not change between steps, so build
+re-authentication into any long flow.
 
 1. Sign in to your MyChart instance. Each health system runs its own, so you need
    a separate export from each.

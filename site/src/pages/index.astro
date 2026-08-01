@@ -69,11 +69,12 @@ const description =
 
         <div class="grid">
           <div class="cap">
-            <h3>Get your records</h3>
+            <h3>It gets your records for you</h3>
             <p>
-              Every visit, test result, medication, immunization and procedure
-              your health systems have on file — downloaded and turned into
-              plain readable text instead of the machine format they arrive in.
+              You do not go hunting through menus. The assistant opens your
+              patient portal, finds the export buried in it, requests your full
+              record, downloads it and unpacks it — narrating each step, asking
+              before anything that matters. You watch it happen.
             </p>
           </div>
           <div class="cap">
@@ -111,6 +112,7 @@ const description =
           <li>“Write to my clinic and ask where my referral went.”</li>
           <li>“I have an appointment Thursday. What should I bring up?”</li>
           <li>“Put together a summary of my history for a new specialist.”</li>
+          <li>“Log into my patient portal and download my records.”</li>
           <li>“Get my records from the clinic I used to go to.”</li>
         </ul>
       </section>
@@ -138,16 +140,19 @@ const description =
         </div>
 
         <div class="hard">
-          <h3>Getting your records out</h3>
+          <h3>Health systems are slow, and occasionally stubborn</h3>
           <p>
-            Every health system buries this somewhere different, calls it
-            something different, and makes you wait for it. Some staff do not know
-            the feature exists. You may have to ask more than once.
+            The assistant does the actual work here — it drives the portal, finds
+            the export and downloads it. What it cannot do is make a hospital
+            hurry. Preparing a full record takes hours or days. A few systems
+            still want a phone call or a signed form, and some front-desk staff do
+            not know the feature exists.
           </p>
           <p class="fix">
             You have a legal right to these records, and that matters more than it
             sounds — it turns the conversation from a favor you are asking into a
-            request they are required to fulfill. We will show you the words.
+            request they are required to fulfill. We give you the words, and the
+            assistant drafts anything that needs writing.
           </p>
         </div>
 
@@ -244,6 +249,7 @@ const description =
             <div class="card">
               <h3><span class="num">1</span> Get your records from ${esc(p.name)}</h3>
               <p class="verified">Somebody has done this and written down the steps.</p>
+              <p><strong>Your assistant can do most of this for you.</strong> Ask it to, and it will open the portal, work through the menus, request your full record and download it — telling you what it is doing at each step. The path it takes:</p>
               ${ol(p.steps)}
               ${p.format ? `<p class="meta">What you get: ${esc(p.format)}. It will look like nonsense if you open it. That is expected — making it readable is the assistant's job.</p>` : ''}
               ${p.warnings.map((w) => `<p class="warn">${esc(w)}</p>`).join('')}
@@ -253,7 +259,7 @@ const description =
           <div class="card">
             <h3><span class="num">1</span> Get your records${p.id !== 'other' ? ` from ${esc(p.name)}` : ''}</h3>
             <p class="unknown">We don't have step-by-step instructions for this one yet.</p>
-            <p>Here is the general approach, which works almost everywhere:</p>
+            <p><strong>That matters less than it used to.</strong> Ask your assistant to open your portal and find the record export — searching an unfamiliar interface is something it is good at, and it will show you what it finds. The general shape, which holds almost everywhere:</p>
             <ol>
               <li>Sign in to the website you use to check test results or message your doctor.</li>
               <li>Look through the menu for anything called <em>Records</em>, <em>Documents</em>, <em>Health Record</em>, <em>Download</em>, or <em>Share my record</em>. It is usually not on the front page.</li>
@@ -263,6 +269,18 @@ const description =
             </ol>
             ${p.warnings.map((w) => `<p class="warn">${esc(w)}</p>`).join('')}
             <p class="ask">Once you work it out, <a href="${repo}/issues/new">please tell us how you did it</a> so the next person has real instructions. Describe the buttons you clicked. Never anything about your health.</p>
+          </div>`;
+      }
+
+      function consentBlock(p) {
+        if (!p) return '';
+        return `
+          <div class="card">
+            <h3>How the signing-in part works</h3>
+            <p>Reasonably, people want to know what an AI is doing with a medical login. Two things make this safe, and neither is complicated.</p>
+            <p><strong>You never type a password into the chat.</strong> Either you sign in yourself and hand over the already-open browser, or you use a password manager, which fills the login without the assistant ever seeing the password. Both are normal. A good assistant will refuse a password typed into the conversation.</p>
+            <p><strong>You watch it work.</strong> It uses a browser window you can see, it says what it is about to do, and it asks before anything that matters. Nothing happens off-screen. If you do not like where it is going, you stop it.</p>
+            <p class="note">It is reading and downloading your own records. It is not sending messages, booking anything, or changing anything — not unless you specifically ask, and then it writes the draft and you press send.</p>
           </div>`;
       }
 
@@ -344,6 +362,7 @@ const description =
         results.innerHTML = `
           <h2>Your steps</h2>
           ${providerBlock(p)}
+          ${consentBlock(p)}
           ${rightsBlock(p)}
           ${agentBlock(a)}
           ${p && a ? goBlock(a) : '<p class="more">Answer both questions above to see the last step.</p>'}

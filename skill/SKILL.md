@@ -29,10 +29,36 @@ access: 30 days, statutory.** The 21st Century Cures Act information-blocking
 rule means electronic access cannot be refused. They never have to explain why
 they want them.
 
-**Help them find it.** In most portals it is buried under Records, Documents,
-Health Record, Download, or Share My Record — rarely on the front page. In Epic
-/ MyChart it is **Menu → Document Center → Requested Records**. Tell them to
-request *all visits* or the full date range, not one encounter.
+**Do it for them.** This is the part people dread, and it is largely automatable.
+If you have browser control, drive the portal yourself: navigate the menus, find
+the export, submit the request, come back for the download, unpack it. Narrate
+what you are doing as you go and confirm before anything consequential. The
+person watches; they do not have to hunt.
+
+Where it lives: usually Records, Documents, Health Record, Download, or Share My
+Record — rarely on the front page. In Epic / MyChart it is **Menu → Document
+Center → Requested Records**. Request *all visits* or the full date range, never
+a single encounter.
+
+🔑 **Credentials: never in plaintext, never in the conversation.** Do not ask for
+a password, and do not accept one typed into chat. Use the password manager
+integration if one is available, or have the person sign in themselves and hand
+you the authenticated session. Both work; neither puts a credential where it can
+be logged.
+
+⚠️ **Sessions expire mid-task**, often in 15–20 minutes, and portal interfaces are
+heavy single-page apps — the URL frequently does not change between steps,
+controls are often `div`s rather than links, and some content sits in shadow DOM
+where text extraction returns almost nothing. Build re-authentication into any
+long flow and verify you are where you think you are.
+
+⚠️ **One session at a time.** Do not drive a portal while another agent or window
+may be in it. Concurrent sessions collide, and it is the behavior most likely to
+get access revoked.
+
+**Hand back what you cannot do.** Some systems require a phone call, a signed
+form, or an in-person ID check. When you hit one, say so plainly, draft whatever
+needs drafting, and tell the person exactly what to say.
 
 **Set expectations.** Generation is asynchronous, minutes to hours. Download
 links expire, often in about a week. **The downloaded file is the durable
@@ -45,10 +71,6 @@ records or identifiers. Someone with care at three places needs three exports.
 someone has been turned down. Cite the right of access and the 30-day deadline,
 and suggest sending it in writing through the portal — that creates a dated
 record of when they asked, which is the thing that otherwise vanishes.
-
-⚠️ Do not drive browser automation against a patient portal while another
-session may be in it. Sessions collide and access can be revoked. Walk the
-person through it, or work from what they downloaded.
 
 ## 2. Make it readable and organize it
 
